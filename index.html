@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi trimestre en números</title>
+<meta name="description" content="Dashboard personal de ingresos y gastos de agosto a octubre de 2026.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🌿%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/gridjs-mermaid.min.css">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="hero" id="inicio">
+  <div class="hero-contenido">
+    <p class="hero-periodo" id="hero-periodo">Agosto a octubre de 2026</p>
+    <h1>Mi trimestre<br>en números</h1>
+    <p class="hero-texto">Tres meses de ingresos y gastos anotados a mano en una libreta, ahora convertidos en un recorrido: qué entró, a dónde se fue y qué decidí hacer con lo que aprendí.</p>
+    <div class="hero-pie">
+      <a class="boton boton-claro" href="#filtros">Explorar los datos</a>
+      <a class="boton boton-fantasma" href="#fichas">Ir a mis conclusiones</a>
+    </div>
+  </div>
+  <div class="hero-resumen" aria-live="polite">
+    <span class="hero-resumen-etiqueta">Balance del periodo</span>
+    <strong class="hero-resumen-valor" id="hero-balance">—</strong>
+    <span class="hero-resumen-estado" id="hero-estado" data-estado="neutral">Calculando</span>
+  </div>
+</header>
+
+<nav class="barra-contexto" aria-label="Secciones">
+  <div class="barra-contexto-interior">
+    <span class="barra-contexto-activo" id="contexto-activo">Trimestre completo</span>
+    <ul class="barra-contexto-nav">
+      <li><a href="#resumen">Resumen</a></li>
+      <li><a href="#composicion">Composición</a></li>
+      <li><a href="#ritmo">Ritmo</a></li>
+      <li><a href="#habitos">Hábitos</a></li>
+      <li><a href="#irregulares">Irregulares</a></li>
+      <li><a href="#concentracion">Concentración</a></li>
+      <li><a href="#explorar">Tablas</a></li>
+      <li><a href="#fichas">Conclusiones</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="contenedor">
+
+  <section class="panel-filtros" id="filtros" aria-labelledby="t-filtros">
+    <div class="panel-filtros-cabecera">
+      <h2 id="t-filtros">Filtra y segmenta</h2>
+      <p>Todo el tablero responde a estos controles al mismo tiempo.</p>
+      <button type="button" class="boton boton-suave" id="f-reiniciar">Restablecer filtros</button>
+    </div>
+
+    <div class="filtros-rejilla">
+      <fieldset class="filtro filtro-mes">
+        <legend>Mes</legend>
+        <div class="segmentado" role="radiogroup" aria-label="Mes">
+          <input type="radio" name="f-mes" id="mes-todo" value="todo" checked>
+          <label for="mes-todo">Trimestre</label>
+          <input type="radio" name="f-mes" id="mes-1" value="2026-08">
+          <label for="mes-1">Agosto</label>
+          <input type="radio" name="f-mes" id="mes-2" value="2026-09">
+          <label for="mes-2">Septiembre</label>
+          <input type="radio" name="f-mes" id="mes-3" value="2026-10">
+          <label for="mes-3">Octubre</label>
+        </div>
+      </fieldset>
+
+      <div class="filtro">
+        <label for="f-preset">Periodo predefinido</label>
+        <select id="f-preset">
+          <option value="trimestre">Todo el trimestre</option>
+          <option value="mes">Mes completo</option>
+          <option value="q1">Primera quincena</option>
+          <option value="q2">Segunda quincena</option>
+          <option value="semana">Semana específica</option>
+          <option value="ultimos30">Últimos 30 días</option>
+          <option value="ultimos7">Últimos 7 días</option>
+          <option value="personalizado">Rango personalizado</option>
+        </select>
+      </div>
+
+      <div class="filtro">
+        <label for="f-semana">Semana</label>
+        <select id="f-semana">
+          <option value="">Todas las semanas</option>
+        </select>
+      </div>
+
+      <div class="filtro filtro-fechas">
+        <label for="f-inicio">Desde</label>
+        <input type="date" id="f-inicio" min="2026-08-01" max="2026-10-31" value="2026-08-01">
+      </div>
+      <div class="filtro filtro-fechas">
+        <label for="f-fin">Hasta</label>
+        <input type="date" id="f-fin" min="2026-08-01" max="2026-10-31" value="2026-10-31">
+      </div>
+
+      <fieldset class="filtro filtro-tipos">
+        <legend>Tipo de movimiento</legend>
+        <div class="fichas-tipo">
+          <input type="checkbox" id="tipo-ingreso" value="ingreso" checked>
+          <label for="tipo-ingreso" class="tipo-ingreso">Ingresos</label>
+          <input type="checkbox" id="tipo-fijo" value="fijo" checked>
+          <label for="tipo-fijo" class="tipo-fijo">Gastos fijos</label>
+          <input type="checkbox" id="tipo-variable" value="variable" checked>
+          <label for="tipo-variable" class="tipo-variable">Gastos variables</label>
+        </div>
+      </fieldset>
+
+      <div class="filtro">
+        <label for="f-concepto">Concepto o rubro</label>
+        <select id="f-concepto">
+          <option value="">Todos los conceptos</option>
+        </select>
+      </div>
+
+      <div class="filtro">
+        <label for="f-atipicos">Gastos atípicos</label>
+        <select id="f-atipicos">
+          <option value="todos">Mostrar todos</option>
+          <option value="solo">Solo atípicos</option>
+          <option value="excluir">Excluir atípicos</option>
+        </select>
+      </div>
+
+      <div class="filtro">
+        <label for="f-monto">Monto mínimo</label>
+        <input type="number" id="f-monto" min="0" step="10" value="0" inputmode="numeric">
+      </div>
+
+      <div class="filtro filtro-buscar">
+        <label for="f-buscar">Buscar concepto o nota</label>
+        <input type="search" id="f-buscar" placeholder="Por ejemplo, despensa" autocomplete="off">
+      </div>
+    </div>
+
+    <ul class="filtros-activos" id="filtros-activos" aria-live="polite"></ul>
+  </section>
+
+  <section class="veredicto" id="veredicto" data-estado="neutral" aria-live="polite">
+    <div class="veredicto-marca" aria-hidden="true"></div>
+    <div class="veredicto-texto">
+      <h2 id="veredicto-titulo">Calculando el veredicto del periodo</h2>
+      <p id="veredicto-detalle">Cuando se carguen los datos aquí verás si el periodo cerró con superávit o déficit y por cuánto.</p>
+    </div>
+    <div class="veredicto-medidor">
+      <div class="medidor" role="img" aria-label="Proporción de ingreso gastado">
+        <div class="medidor-barra" id="medidor-barra"></div>
+      </div>
+      <span class="medidor-nota" id="medidor-nota">—</span>
+    </div>
+  </section>
+
+  <section class="seccion" id="resumen" aria-labelledby="t-resumen">
+    <header class="seccion-cabecera">
+      <h2 id="t-resumen">Panorama general</h2>
+      <p>Las cifras que resumen el periodo seleccionado.</p>
+    </header>
+    <div class="kpis">
+      <article class="kpi kpi-ingreso" id="kpi-ingresos">
+        <h3>Ingresos</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">—</span>
+        <div class="spark" id="spark-ingresos"></div>
+      </article>
+      <article class="kpi kpi-fijo" id="kpi-fijos">
+        <h3>Gastos fijos</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">—</span>
+        <div class="spark" id="spark-fijos"></div>
+      </article>
+      <article class="kpi kpi-variable" id="kpi-variables">
+        <h3>Gastos variables</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">—</span>
+        <div class="spark" id="spark-variables"></div>
+      </article>
+      <article class="kpi kpi-balance" id="kpi-balance" data-estado="neutral">
+        <h3>Balance neto</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">—</span>
+        <div class="spark" id="spark-balance"></div>
+      </article>
+    </div>
+    <div class="kpis kpis-secundarios">
+      <article class="kpi kpi-mini" id="kpi-tasa-ahorro">
+        <h3>Tasa de ahorro</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">Del ingreso, lo que se quedó</span>
+      </article>
+      <article class="kpi kpi-mini" id="kpi-peso-fijos">
+        <h3>Peso de los fijos</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">Del ingreso ya comprometido</span>
+      </article>
+      <article class="kpi kpi-mini" id="kpi-variable-diario">
+        <h3>Variable por día</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">Promedio diario</span>
+      </article>
+      <article class="kpi kpi-mini" id="kpi-dias-sin-gasto">
+        <h3>Días sin gasto variable</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">Y su mejor racha</span>
+      </article>
+      <article class="kpi kpi-mini" id="kpi-atipicos">
+        <h3>Gastos atípicos</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">Fuera de lo habitual</span>
+      </article>
+      <article class="kpi kpi-mini" id="kpi-movimientos">
+        <h3>Movimientos</h3>
+        <strong class="kpi-valor">—</strong>
+        <span class="kpi-nota">Registros en el periodo</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion" id="composicion" aria-labelledby="t-composicion">
+    <header class="seccion-cabecera">
+      <h2 id="t-composicion">En qué se va el dinero</h2>
+      <p>De lo más general a lo más fino: primero fijos contra variables, luego cada rubro.</p>
+    </header>
+    <div class="bento">
+      <article class="card s4">
+        <header class="card-cabecera">
+          <h3>Fijos contra variables</h3>
+          <p>El peso de cada tipo de gasto sobre el total gastado.</p>
+        </header>
+        <div class="grafica g-md" id="ch-dona" role="img" aria-label="Dona de gastos fijos contra variables"></div>
+        <footer class="lectura" id="lec-dona"></footer>
+      </article>
+      <article class="card s8">
+        <header class="card-cabecera">
+          <h3>Mapa de conceptos</h3>
+          <p>Cada rectángulo es un concepto, su tamaño es el monto acumulado.</p>
+        </header>
+        <div class="grafica g-md" id="ch-treemap" role="img" aria-label="Mapa de árbol de conceptos por monto"></div>
+        <footer class="lectura" id="lec-treemap"></footer>
+      </article>
+      <article class="card s6">
+        <header class="card-cabecera">
+          <h3>Desglose de gastos fijos</h3>
+          <p>La base que se paga sin importar cómo vaya el mes.</p>
+        </header>
+        <div class="grafica g-md" id="ch-fijos" role="img" aria-label="Barras de gastos fijos por concepto"></div>
+      </article>
+      <article class="card s6">
+        <header class="card-cabecera">
+          <h3>Desglose de gastos variables</h3>
+          <p>Lo que cambia con mis decisiones del día a día.</p>
+        </header>
+        <div class="grafica g-md" id="ch-variables" role="img" aria-label="Barras de gastos variables por concepto"></div>
+      </article>
+      <article class="card s12">
+        <header class="card-cabecera">
+          <h3>Del ingreso al destino</h3>
+          <p>Cómo se reparte lo que entró entre fijos, variables y ahorro.</p>
+        </header>
+        <div class="grafica g-md" id="ch-sankey" role="img" aria-label="Diagrama de flujo de ingresos a gastos y ahorro"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion" id="ritmo" aria-labelledby="t-ritmo">
+    <header class="seccion-cabecera">
+      <h2 id="t-ritmo">Cómo se mueve mi dinero en el tiempo</h2>
+      <p>Mis ingresos son irregulares, así que el saldo acumulado cuenta la historia completa.</p>
+    </header>
+    <div class="bento">
+      <article class="card s12 card-destacada">
+        <header class="card-cabecera">
+          <h3>Saldo acumulado día a día</h3>
+          <p>Donde la línea cruza el cero, el trimestre se inclinó hacia superávit o déficit.</p>
+        </header>
+        <div class="grafica g-lg" id="ch-saldo-acumulado" role="img" aria-label="Línea de saldo acumulado diario"></div>
+        <footer class="lectura" id="lec-saldo"></footer>
+      </article>
+      <article class="card s7">
+        <header class="card-cabecera">
+          <h3>Ingresos por semana</h3>
+          <p>Semanas de lunes a domingo, con el gasto de cada una como referencia.</p>
+        </header>
+        <div class="grafica g-md" id="ch-ingresos-semanal" role="img" aria-label="Barras de ingresos y gastos por semana"></div>
+      </article>
+      <article class="card s5">
+        <header class="card-cabecera">
+          <h3>Ingresos y balance por mes</h3>
+          <p>Superávit o déficit de cada mes del trimestre.</p>
+        </header>
+        <div class="grafica g-md" id="ch-ingresos-mensual" role="img" aria-label="Barras de ingresos y balance por mes"></div>
+      </article>
+      <article class="card s12">
+        <header class="card-cabecera">
+          <h3>Tasa de ahorro y peso de los fijos por mes</h3>
+          <p>Dos indicadores que permiten comparar meses con ingresos distintos.</p>
+        </header>
+        <div class="grafica g-sm" id="ch-tasas-mensuales" role="img" aria-label="Líneas de tasa de ahorro y peso de gastos fijos por mes"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion" id="habitos" aria-labelledby="t-habitos">
+    <header class="seccion-cabecera">
+      <h2 id="t-habitos">Cuándo gasto</h2>
+      <p>Con unas trece semanas por día de la semana, estos patrones son tendencias observadas, no reglas firmes.</p>
+    </header>
+    <div class="bento">
+      <article class="card s8">
+        <header class="card-cabecera">
+          <h3>Mapa de calor semana por día</h3>
+          <p>Gasto variable de cada día; los tonos intensos marcan los picos.</p>
+        </header>
+        <div class="grafica g-md" id="ch-heatmap-dia" role="img" aria-label="Mapa de calor de gasto por día de la semana y semana"></div>
+      </article>
+      <article class="card s4">
+        <header class="card-cabecera">
+          <h3>Promedio por día de la semana</h3>
+          <p>Cuánto gasto en promedio cada día.</p>
+        </header>
+        <div class="grafica g-md" id="ch-dia-semana" role="img" aria-label="Barras radiales de gasto promedio por día de la semana"></div>
+      </article>
+      <article class="card s12">
+        <header class="card-cabecera">
+          <h3>Calendario del gasto variable</h3>
+          <p>Cada casilla es un día; los vacíos son días sin gasto variable.</p>
+        </header>
+        <div class="grafica g-md" id="ch-calendario" role="img" aria-label="Calendario de gasto variable diario"></div>
+        <footer class="lectura" id="lec-calendario"></footer>
+      </article>
+      <article class="card s6">
+        <header class="card-cabecera">
+          <h3>Primera y segunda quincena</h3>
+          <p>Si gasto distinto después de cobrar o cuando el dinero escasea.</p>
+        </header>
+        <div class="grafica g-sm" id="ch-quincena" role="img" aria-label="Comparativa de gasto entre quincenas por mes"></div>
+      </article>
+      <article class="card s6">
+        <header class="card-cabecera">
+          <h3>Inicio, mitad y fin de mes</h3>
+          <p>Distribución del gasto variable según el momento del mes.</p>
+        </header>
+        <div class="grafica g-sm" id="ch-momento-mes" role="img" aria-label="Gasto variable por momento del mes"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion" id="irregulares" aria-labelledby="t-irregulares">
+    <header class="seccion-cabecera">
+      <h2 id="t-irregulares">Lo que se sale de lo normal</h2>
+      <p>El tablero señala candidatos a gasto atípico con una regla simple y explicable. No los juzga: tú decides cuáles fueron justificados.</p>
+    </header>
+    <div class="bento">
+      <article class="card s7">
+        <header class="card-cabecera">
+          <h3>Dispersión de gastos variables</h3>
+          <p>Cada punto es un gasto; los marcados superan el umbral atípico.</p>
+        </header>
+        <div class="grafica g-md" id="ch-dispersion" role="img" aria-label="Dispersión de montos por fecha con atípicos resaltados"></div>
+      </article>
+      <article class="card s5">
+        <header class="card-cabecera">
+          <h3>Distribución por concepto</h3>
+          <p>Cajas con la variación típica de cada concepto.</p>
+        </header>
+        <div class="grafica g-md" id="ch-boxplot" role="img" aria-label="Diagrama de cajas de montos por concepto"></div>
+      </article>
+      <article class="card s5">
+        <header class="card-cabecera">
+          <h3>Conceptos más cambiantes</h3>
+          <p>Variación relativa del monto de cada concepto.</p>
+        </header>
+        <div class="grafica g-md" id="ch-volatilidad" role="img" aria-label="Barras de variabilidad por concepto"></div>
+      </article>
+      <article class="card s7 card-alerta">
+        <header class="card-cabecera">
+          <h3>Candidatos a gasto atípico</h3>
+          <p>Ordenados de mayor a menor monto.</p>
+        </header>
+        <ol class="lista-atipicos" id="lista-atipicos"></ol>
+        <p class="vacio" id="vacio-atipicos" hidden>No hay gastos atípicos con los filtros actuales.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion" id="concentracion" aria-labelledby="t-concentracion">
+    <header class="seccion-cabecera">
+      <h2 id="t-concentracion">Pocos conceptos, mucho peso</h2>
+      <p>Qué rubros concentran el dinero, cuáles son muy frecuentes y cuáles apenas se notan.</p>
+    </header>
+    <div class="bento">
+      <article class="card s7">
+        <header class="card-cabecera">
+          <h3>Regla de Pareto</h3>
+          <p>Barras por concepto y línea del porcentaje acumulado del gasto.</p>
+        </header>
+        <div class="grafica g-md" id="ch-pareto" role="img" aria-label="Diagrama de Pareto de conceptos"></div>
+        <footer class="lectura" id="lec-pareto"></footer>
+      </article>
+      <article class="card s5">
+        <header class="card-cabecera">
+          <h3>Conceptos por frecuencia</h3>
+          <p>Cuántas veces aparece cada concepto, sin importar el monto.</p>
+        </header>
+        <div class="grafica g-md" id="ch-frecuencia" role="img" aria-label="Barras de frecuencia por concepto"></div>
+      </article>
+      <article class="card s12 card-destacada">
+        <header class="card-cabecera">
+          <h3>Frecuencia contra impacto</h3>
+          <p>Arriba a la derecha, lo frecuente y caro. Abajo a la derecha, los gastos hormiga.</p>
+        </header>
+        <div class="grafica g-lg" id="ch-frecuencia-impacto" role="img" aria-label="Dispersión de frecuencia contra monto total por concepto"></div>
+        <footer class="lectura" id="lec-hormiga"></footer>
+      </article>
+      <article class="card s12">
+        <header class="card-cabecera">
+          <h3>Mes contra mes por concepto</h3>
+          <p>Qué rubros crecieron o bajaron entre agosto, septiembre y octubre.</p>
+        </header>
+        <div class="grafica g-md" id="ch-mes-vs-mes" role="img" aria-label="Barras agrupadas de conceptos por mes"></div>
+        <footer class="lectura" id="lec-mes-vs-mes"></footer>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion" id="explorar" aria-labelledby="t-explorar">
+    <header class="seccion-cabecera">
+      <h2 id="t-explorar">Explora los registros</h2>
+      <p>Cinco vistas de la misma información. Ordena por columna y busca dentro de cada tabla.</p>
+    </header>
+    <div class="card tabs">
+      <input type="radio" name="vista" id="tab-movs" checked>
+      <input type="radio" name="vista" id="tab-conceptos">
+      <input type="radio" name="vista" id="tab-semanas">
+      <input type="radio" name="vista" id="tab-dias">
+      <input type="radio" name="vista" id="tab-atipicos">
+      <div class="tab-etiquetas" role="tablist">
+        <label for="tab-movs" role="tab">Movimientos</label>
+        <label for="tab-conceptos" role="tab">Por concepto</label>
+        <label for="tab-semanas" role="tab">Por semana</label>
+        <label for="tab-dias" role="tab">Por día</label>
+        <label for="tab-atipicos" role="tab">Atípicos</label>
+      </div>
+      <div class="paneles">
+        <div class="panel" id="panel-movs" role="tabpanel"><div class="tabla" id="tabla-movimientos"></div></div>
+        <div class="panel" id="panel-conceptos" role="tabpanel"><div class="tabla" id="tabla-conceptos"></div></div>
+        <div class="panel" id="panel-semanas" role="tabpanel"><div class="tabla" id="tabla-semanas"></div></div>
+        <div class="panel" id="panel-dias" role="tabpanel"><div class="tabla" id="tabla-dias"></div></div>
+        <div class="panel" id="panel-atipicos" role="tabpanel"><div class="tabla" id="tabla-atipicos"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion seccion-fichas" id="fichas" aria-labelledby="t-fichas">
+    <header class="seccion-cabecera">
+      <h2 id="t-fichas">Lo que me llevo de estos tres meses</h2>
+      <p>Cada hallazgo apunta a la gráfica o cifra que lo sostiene.</p>
+    </header>
+    <div class="fichas-rejilla">
+      <article class="ficha ficha-analisis" id="ficha-analisis">
+        <header>
+          <h3>Análisis personal</h3>
+          <p>Lo que descubrí sobre mis hábitos, gastos y preocupaciones.</p>
+        </header>
+        <ul class="ficha-items"></ul>
+      </article>
+      <article class="ficha ficha-objetivos" id="ficha-objetivos">
+        <header>
+          <h3>Objetivos financieros</h3>
+          <p>Metas concretas que salen de estos tres meses.</p>
+        </header>
+        <ul class="ficha-items"></ul>
+      </article>
+      <article class="ficha ficha-aprendizajes" id="ficha-aprendizajes">
+        <header>
+          <h3>¿Qué aprendí?</h3>
+          <p>Conclusiones del ejercicio de registrar y analizar.</p>
+        </header>
+        <ul class="ficha-items"></ul>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <p id="pie-origen">Dashboard personal y estático. Todo se calcula en tu navegador.</p>
+  <a href="#inicio">Volver al inicio</a>
+</footer>
+
+<script src="vendor/echarts.min.js"></script>
+<script src="vendor/gridjs.umd.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
