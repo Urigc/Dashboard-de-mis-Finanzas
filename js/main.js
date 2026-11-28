@@ -52,6 +52,7 @@
     .map((r, i) => {
       const tipo = TIPO_MAP[limpia(r.tipo).toLowerCase()];
       const monto = Number(r.monto);
+      if (monto === 0) return null;
       const fecha = limpia(r.fecha);
       if (!tipo || !Number.isFinite(monto) || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
         console.warn("Movimiento omitido por formato inválido:", r);
@@ -185,7 +186,7 @@
     kpi("kpi-peso-fijos", pc(r.peso, 1), "Del ingreso ya comprometido");
     kpi("kpi-variable-diario", fm(r.varDia), "Promedio diario");
     kpi("kpi-dias-sin-gasto", r.sin + " de " + r.dias, "Mejor racha: " + r.racha + (r.racha === 1 ? " día" : " días"));
-    kpi("kpi-atipicos", String(r.nAtip), "Umbral: " + fm(LIM) + " por gasto");
+    kpi("kpi-atipicos", String(r.nAtip), r.nAtip ? "Sobre el umbral de " + fm(LIM) : "Ninguno supera " + fm(LIM));
     kpi("kpi-movimientos", String(r.n), r.nIng + " ingresos · " + (r.n - r.nIng) + " gastos");
     spark("spark-ingresos", sem("ing"), C.ing);
     spark("spark-fijos", sem("fij"), C.fij);
@@ -391,7 +392,7 @@
       tooltip: tip({ formatter: (p) => cap(DIAS[p.value[1]]) + " " + corto(p.value[3]) + "<br><b>" + fm(p.value[2]) + "</b>" }),
       xAxis: ejeX({ type: "category", data: c.semanas.map(corto), splitArea: { show: false }, axisLabel: { color: C.tx, interval: "auto" } }),
       yAxis: ejeX({ type: "category", data: DIASC.map(cap), inverse: true, axisLine: { show: false } }),
-      visualMap: { min: 0, max, calculable: false, orient: "horizontal", left: "center", bottom: 0, itemWidth: 14, itemHeight: 160, textStyle: { color: C.tx }, formatter: (v) => fm(v), inRange: { color: ["#eef7f0", "#9ed6b6", "#2fa57b", "#0e3a2b"] } },
+      visualMap: { dimension: 2, min: 0, max, calculable: false, orient: "horizontal", left: "center", bottom: 0, itemWidth: 14, itemHeight: 160, textStyle: { color: C.tx }, formatter: (v) => fm(v), inRange: { color: ["#eef7f0", "#9ed6b6", "#2fa57b", "#0e3a2b"] } },
       series: [{ type: "heatmap", data, itemStyle: { borderColor: C.papel, borderWidth: 3, borderRadius: 6 }, emphasis: { itemStyle: { borderColor: C.atip } } }]
     });
   }
@@ -500,8 +501,12 @@
 
   function renderListaAtipicos(c) {
     const a = c.rows.filter((r) => r.atipico).sort((x, y) => y.monto - x.monto);
-    $("lista-atipicos").innerHTML = a.map((r) => '<li class="atipico"><strong>' + esc(r.concepto) + "</strong><span class=\"monto\">" + fm(r.monto) + "</span><small>" + esc(cap(DIAS[r.dow])) + " " + fechaTxt(r.fecha) + (r.nota ? " · " + esc(r.nota) : "") + " · " + (r.monto / LIM).toFixed(1).replace(".", ",") + " veces el umbral</small></li>").join("");
-    $("vacio-atipicos").hidden = a.length > 0;
+    const vari = c.rows.filter((r) => r.tipo === "variable").sort((x, y) => y.monto - x.monto);
+    const lista = a.length ? a : vari.slice(0, 5);
+    $("lista-atipicos").innerHTML = lista.map((r) => '<li class="atipico"><strong>' + esc(r.concepto) + '</strong><span class="monto">' + fm(r.monto) + "</span><small>" + esc(cap(DIAS[r.dow])) + " " + fechaTxt(r.fecha) + (r.nota ? " · " + esc(r.nota) : "") + " · " + (a.length ? (r.monto / LIM).toFixed(1).replace(".", ",") + " veces el umbral" : pc(r.monto / LIM) + " del umbral") + "</small></li>").join("");
+    const nota = $("vacio-atipicos");
+    nota.hidden = a.length > 0;
+    nota.textContent = vari.length ? "Ningún gasto superó el umbral atípico de " + fm(LIM) + " con los filtros actuales. Estos son los " + lista.length + " mayores gastos variables del periodo, como referencia." : "No hay gastos variables con los filtros actuales.";
   }
 
   function renderPareto(c) {
@@ -780,16 +785,46 @@
     (t.closest(".card, .kpi") || t).animate([{ boxShadow: "0 0 0 0 rgba(47,165,123,.75)" }, { boxShadow: "0 0 0 16px rgba(47,165,123,0)" }], { duration: 1000 });
   }
 
+  function datosVivos() {
+    const T = construye(MOV, rangoDias(P.inicio, P.fin));
+    const r = T.res;
+    const g = porConcepto(MOV, true);
+    const h = g.filter(esHormiga);
+    const hs = h.reduce((a, x) => a + x.total, 0);
+    const prom = DIASC.map((_, k) => { const ds = T.dias.filter((d) => dow(d) === k); return ds.length ? ds.reduce((a, d) => a + T.dm.get(d).vari, 0) / ds.length : 0; });
+    const im = prom.indexOf(Math.max(...prom));
+    let acc = 0, min = 0;
+    T.dias.forEach((d) => { const o = T.dm.get(d); acc += o.ing - o.fij - o.vari; min = Math.min(min, acc); });
+    const na = MOV.filter((x) => x.atipico).length;
+    const v = {
+      "kpi-tasa-ahorro": "Con tus datos: " + pc(r.tasa, 1),
+      "kpi-peso-fijos": "Con tus datos: " + pc(r.peso, 1) + " del ingreso",
+      "kpi-variable-diario": "Con tus datos: " + fm(r.varDia) + " por día",
+      "ch-frecuencia-impacto": h.length ? "Con tus datos: hormiga " + fm(hs) + " (" + pc(r.vari ? hs / r.vari : NaN) + " del variable)" : "Con tus datos: sin gastos hormiga",
+      "ch-heatmap-dia": "Con tus datos: el " + DIAS[im] + " gasta más, " + fm(prom[im]) + " en promedio",
+      "ch-saldo-acumulado": "Con tus datos: cierra en " + signo(acc) + ", mínimo " + signo(min),
+      "ch-dispersion": "Con tus datos: " + na + (na === 1 ? " gasto atípico" : " gastos atípicos"),
+      "lista-atipicos": "Con tus datos: " + na + (na === 1 ? " gasto atípico" : " gastos atípicos"),
+      "ch-calendario": "Con tus datos: " + r.sin + " días sin gasto variable de " + r.dias
+    };
+    if (T.meses.length > 1) {
+      const a = T.meses[0], b = T.meses[T.meses.length - 1];
+      const val = (m, n) => MOV.filter((x) => x.mes === m && x.tipo !== "ingreso" && x.concepto === n).reduce((t, x) => t + x.monto, 0);
+      const d = unicos(g.map((x) => x.concepto)).map((n) => ({ n, d: val(b, n) - val(a, n) })).sort((x, y) => y.d - x.d);
+      v["ch-mes-vs-mes"] = "Con tus datos: subió más " + d[0].n + " (" + signo(d[0].d) + ")";
+    }
+    return v;
+  }
+
   function renderFichas() {
-    const total = construye(MOV, rangoDias(P.inicio, P.fin)).res;
-    const vivos = { "kpi-tasa-ahorro": () => "Hoy: " + pc(total.tasa, 1), "kpi-variable-diario": () => "Hoy: " + fm(total.varDia) + " por día" };
+    const vivos = datosVivos();
     [["ficha-analisis", "analisis"], ["ficha-objetivos", "objetivos"], ["ficha-aprendizajes", "aprendizajes"]].forEach(([id, k]) => {
       const f = D.fichas[k];
       const art = $(id);
       art.querySelector("h3").textContent = f.titulo;
       art.querySelector("header p").textContent = f.subtitulo;
       art.querySelector(".ficha-items").innerHTML = f.items.map((it) => {
-        const vivo = k === "objetivos" && vivos[it.evidencia] ? '<span class="ficha-meta">' + esc(vivos[it.evidencia]()) + "</span>" : "";
+        const vivo = vivos[it.evidencia] ? '<span class="ficha-meta">' + esc(vivos[it.evidencia]) + "</span>" : "";
         return '<li class="ficha-item"><h4>' + esc(it.titulo) + "</h4><p>" + esc(it.texto) + "</p>" +
           (it.meta ? '<span class="ficha-meta">' + esc(it.meta) + (it.plazo ? " · " + esc(it.plazo) : "") + "</span>" : "") + vivo +
           (it.evidencia ? '<a class="ficha-evidencia" href="#' + esc(it.evidencia) + '" data-ev="' + esc(it.evidencia) + '">Ver la evidencia</a>' : "") + "</li>";
