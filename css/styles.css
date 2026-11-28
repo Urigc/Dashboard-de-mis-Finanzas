@@ -496,7 +496,7 @@ button, input, select { font: inherit; color: inherit; }
 .ficha-item { padding: 16px 18px; background: var(--crema); border-radius: var(--r-md); }
 .ficha-item h4 { margin: 0 0 6px; font-family: var(--display); font-size: 1.05rem; line-height: 1.3; color: var(--bosque); }
 .ficha-item p { font-size: 0.93rem; color: var(--tinta-2); }
-.ficha-meta { display: inline-block; margin-top: 10px; padding: 4px 12px; font-size: 0.82rem; font-weight: 600; color: var(--bosque-2); background: var(--menta); border-radius: 999px; }
+.ficha-meta { display: inline-block; margin: 10px 8px 0 0; padding: 4px 12px; font-size: 0.82rem; font-weight: 600; color: var(--bosque-2); background: var(--menta); border-radius: 999px; }
 .ficha-evidencia { display: inline-block; margin: 10px 0 0 8px; font-size: 0.84rem; font-weight: 600; text-decoration: none; border-bottom: 1.5px solid var(--jade); }
 .ficha-evidencia:hover { color: var(--bosque); }
 
