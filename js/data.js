@@ -1,7 +1,7 @@
 window.DATOS = {
   meta: {
     "titulo": "Desglose de mis finanzas en estos 3 meses",
-    "subtitulo": "Septiembte a Noviembre de 2026",
+    "subtitulo": "Septiembre a Noviembre de 2026",
     "moneda": "MXN",
     "locale": "es-MX",
     "periodo": {
@@ -9,11 +9,11 @@ window.DATOS = {
       "fin": "2026-11-30"
     },
     "inicioSemana": "lunes",
-    "origen": "Datos sintéticos de ejemplo. Reemplaza los movimientos por tus registros reales.",
+    "origen": "Registros personales anotados a mano, de septiembre a noviembre de 2026.",
     "config": {
       "atipicos": {
         "metodo": "iqr",
-        "factor": 4,
+        "factor": 1.5,
         "soloVariables": true
       },
       "hormiga": {
@@ -112,7 +112,7 @@ window.DATOS = {
   movimientos: [
     { fecha: "2026-09-02", tipo: "fijo", concepto: "Transporte", monto: 22 },
     { fecha: "2026-09-02", tipo: "variable", concepto: "Material escolar", monto: 65 },
-    { fecha: "2026-09-02", tipo: "variable", concepto: "Despensa", monto: 63 },
+    { fecha: "2026-09-02", tipo: "variable", concepto: "Despensa", monto: 62.5 },
     { fecha: "2026-09-02", tipo: "ingreso", concepto: "Apoyo familiar", monto: 2800 },
     { fecha: "2026-09-03", tipo: "fijo", concepto: "Transporte", monto: 22 },
     { fecha: "2026-09-04", tipo: "fijo", concepto: "Transporte", monto: 22 },
@@ -145,7 +145,6 @@ window.DATOS = {
     { fecha: "2026-09-13", tipo: "ingreso", concepto: "Apoyo familiar", monto: 0 },
     { fecha: "2026-09-14", tipo: "fijo", concepto: "Transporte", monto: 22 },
     { fecha: "2026-09-14", tipo: "variable", concepto: "Despensa", monto: 250 },
-    { fecha: "2026-09-14", tipo: "variable", concepto: "Comida fuera", monto: 50 },
     { fecha: "2026-09-15", tipo: "fijo", concepto: "Transporte", monto: 0 },
     { fecha: "2026-09-15", tipo: "variable", concepto: "Despensa", monto: 0 },
     { fecha: "2026-09-15", tipo: "ingreso", concepto: "Apoyo familiar", monto: 0 },
@@ -232,15 +231,15 @@ window.DATOS = {
     { fecha: "2026-10-20", tipo: "variable", concepto: "Comida fuera", monto: 50 },
     { fecha: "2026-10-21", tipo: "fijo", concepto: "Transporte", monto: 22 },
     { fecha: "2026-10-21", tipo: "variable", concepto: "Comida fuera", monto: 50 },
-    { fecha: "2026-10-21", tipo: "fijo", concepto: "Transporte", monto: 22 },
-    { fecha: "2026-10-21", tipo: "variable", concepto: "Comida fuera", monto: 70 },
+    { fecha: "2026-10-22", tipo: "fijo", concepto: "Transporte", monto: 22 },
+    { fecha: "2026-10-22", tipo: "variable", concepto: "Comida fuera", monto: 70 },
     { fecha: "2026-10-23", tipo: "fijo", concepto: "Transporte", monto: 22 },
     { fecha: "2026-10-23", tipo: "variable", concepto: "Comida fuera", monto: 50 },
     { fecha: "2026-10-24", tipo: "fijo", concepto: "Transporte", monto: 0 },
     { fecha: "2026-10-24", tipo: "variable", concepto: "Despensa", monto: 0 },
     { fecha: "2026-10-24", tipo: "ingreso", concepto: "Apoyo familiar", monto: 0 },
     { fecha: "2026-10-25", tipo: "fijo", concepto: "Transporte", monto: 0 },
-    { fecha: "2026-10-25", tipo: "variable", concepto: "Despensa", monto: 0 },
+    { fecha: "2026-10-25", tipo: "variable", concepto: "Despensa", monto: 122 },
     { fecha: "2026-10-25", tipo: "ingreso", concepto: "Apoyo familiar", monto: 0 },
     { fecha: "2026-10-26", tipo: "fijo", concepto: "Transporte", monto: 22 },
     { fecha: "2026-10-26", tipo: "variable", concepto: "Despensa", monto: 130 },
@@ -316,22 +315,22 @@ window.DATOS = {
     { fecha: "2026-11-27", tipo: "fijo", concepto: "Transporte", monto: 22 },
   ],
   totalesPorConcepto: [
-    { tipo: "ingreso",  concepto: "Apoyo familiar",   movimientos: 26, total: 7450 },
-    { tipo: "ingreso",  concepto: "Pago de préstamo", movimientos: 1,  total: 150  },
+    { tipo: "ingreso",  concepto: "Apoyo familiar",     movimientos: 5,   total: 7450 },
+    { tipo: "ingreso",  concepto: "Pago de préstamo",   movimientos: 1,   total: 150 },
 
-    { tipo: "fijo",     concepto: "Transporte",       movimientos: 77, total: 1210 },
-    { tipo: "fijo",     concepto: "Spotify",          movimientos: 3,  total: 136  },
-    { tipo: "fijo",     concepto: "Corte de pelo",    movimientos: 1,  total: 100  },
+    { tipo: "fijo",     concepto: "Transporte",         movimientos: 55,  total: 1210 },
+    { tipo: "fijo",     concepto: "Spotify",            movimientos: 3,   total: 136 },
+    { tipo: "fijo",     concepto: "Corte de pelo",      movimientos: 1,   total: 100 },
 
-    { tipo: "variable", concepto: "Despensa",           movimientos: 41, total: 2183 },
-    { tipo: "variable", concepto: "Comida fuera",       movimientos: 21, total: 1448 },
-    { tipo: "variable", concepto: "Transporte a casa",  movimientos: 6,  total: 1391 },
-    { tipo: "variable", concepto: "Café",               movimientos: 5,  total: 136  },
-    { tipo: "variable", concepto: "Snacks",             movimientos: 13, total: 372  },
-    { tipo: "variable", concepto: "Gastos imprevistos", movimientos: 6,  total: 261  },
-    { tipo: "variable", concepto: "Material escolar",   movimientos: 2,  total: 67   },
-    { tipo: "variable", concepto: "Préstamo dado",      movimientos: 1,  total: 50   },
-    { tipo: "variable", concepto: "Pérdidas",           movimientos: 1,  total: 50   }
+    { tipo: "variable", concepto: "Despensa",           movimientos: 21,  total: 2304.5 },
+    { tipo: "variable", concepto: "Comida fuera",       movimientos: 20,  total: 1398 },
+    { tipo: "variable", concepto: "Transporte a casa",  movimientos: 6,   total: 1391 },
+    { tipo: "variable", concepto: "Snacks",             movimientos: 13,  total: 372 },
+    { tipo: "variable", concepto: "Gastos imprevistos", movimientos: 6,   total: 261 },
+    { tipo: "variable", concepto: "Café",               movimientos: 5,   total: 136 },
+    { tipo: "variable", concepto: "Material escolar",   movimientos: 2,   total: 67 },
+    { tipo: "variable", concepto: "Pérdidas",           movimientos: 1,   total: 50 },
+    { tipo: "variable", concepto: "Préstamo dado",      movimientos: 1,   total: 50 }
   ],
   fichas: {
     "analisis": {
@@ -366,7 +365,7 @@ window.DATOS = {
       "items": [
         {
           "titulo": "Apartar el 10 % de cada ingreso",
-          "texto": "Separarlo el mismo día en que llega, antes de pagar cualquier otra cosa.",
+          "texto": "Separarlo el mismo día en que llega, antes de pagar cualquier otra cosa como me fue enseñado en mi clase de finanzas, porque no ahorrar es de pusilánime.",
           "meta": "10 % de tasa de ahorro",
           "plazo": "Desde noviembre",
           "evidencia": "kpi-tasa-ahorro"
@@ -380,14 +379,14 @@ window.DATOS = {
         },
         {
           "titulo": "Comer fuera dos veces por semana",
-          "texto": "Cambiar parte de las salidas del fin de semana por cocinar en casa.",
+          "texto": "Cambiar parte de las comidas fuera de casa por cocinar en casa, fue uno de mis gastos fuertes en variables.",
           "meta": "2 salidas por semana",
           "plazo": "Un mes de prueba",
           "evidencia": "ch-mes-vs-mes"
         },
         {
           "titulo": "Fondo para imprevistos",
-          "texto": "Reservar un monto mensual para reparaciones, salud y regalos, que aparecen siempre.",
+          "texto": "Reservar un monto mensual para gastos emergentes que aparecen siempre.",
           "meta": "Un mes de gastos fijos",
           "plazo": "Seis meses",
           "evidencia": "ch-dispersion"
